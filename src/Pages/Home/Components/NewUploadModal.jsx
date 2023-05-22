@@ -79,6 +79,7 @@ const NewUploadModal = ({showModal, setShowModal}) => {
     hiddenFileInput.current.click();
   };
   
+  
   return(
     showModal ? 
     <ModalContainer>

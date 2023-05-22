@@ -66,8 +66,9 @@ const iconStyle =
 
 const AllFilesPage = () => {
   const [showNewUploadModal, setShowNewUploadModal] = useState(false);
-  const [showUploadProgressModal, setShowUploadProgressModal] = useState(true);
-
+  const [showUploadProgressModal, setShowUploadProgressModal] = useState(false);
+  const [selectedFiles, setSelectedFiles] = useState([]);
+  
   function NewUploadModalHander()
   {
     if(showNewUploadModal === false){setShowNewUploadModal(true)}
@@ -90,7 +91,7 @@ const AllFilesPage = () => {
           <NewText onClick={NewUploadModalHander}>{showNewUploadModal ? "Close" : "New"}</NewText>
         </NewButtonContainer>
       </TitleContainer>
-      <NewUploadModal showModal={showNewUploadModal} setShowModal={setShowNewUploadModal}/>
+      <NewUploadModal showModal={showNewUploadModal} setShowModal={setShowNewUploadModal} setSelectedFiles = {setSelectedFiles}/>
       <UploadProgressModal showModal={showUploadProgressModal} setShowModal={setShowUploadProgressModal} />
       <ListviewFolder/>
     </Container>

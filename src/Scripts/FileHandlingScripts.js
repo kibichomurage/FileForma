@@ -2,7 +2,6 @@ export const HandleSelectedFiles = event => {
     const uploadedFiles = event.target.files;
     console.log(uploadedFiles)
   };
-
 export const one = (fileInput) => 
 {
    
