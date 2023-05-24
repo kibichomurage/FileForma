@@ -5,7 +5,8 @@ import CloseIcon from '@mui/icons-material/Close';
 import ListviewFolder from './Components/ListviewFolder';
 import NewUploadModal from './Components/NewUploadModal';
 import UploadProgressModal from './Components/UploadProgressModal';
-
+import { useSelector, useDispatch } from 'react-redux'
+import {openCloseNewUploadModal, selectNewUploadState, openCloseUploadProgressModal, selectUploadProgressState} from "../../Scripts/ReduxReducers"
 
 const Container = styled.div`
 height:100%;
@@ -45,6 +46,7 @@ cursor: pointer;
   &:hover {
     background-color: gray;
   }
+z-index:10;
 `;
 
 const NewText= styled.h1`
@@ -64,35 +66,42 @@ const iconStyle =
   
 }
 
+const WindowContainer = styled.div`
+height:100vh;
+width:100vw;
+z-index:9;
+background-color:black;
+opacity:0.3;
+position:absolute;
+left:0;
+top:0;
+`;
+
 const AllFilesPage = () => {
-  const [showNewUploadModal, setShowNewUploadModal] = useState(false);
-  const [showUploadProgressModal, setShowUploadProgressModal] = useState(false);
-  const [selectedFiles, setSelectedFiles] = useState([]);
-  
-  function NewUploadModalHander()
+  const showNewUploadModal = useSelector(selectNewUploadState)
+  const showUploadProgressModal = useSelector(selectUploadProgressState)
+  const dispatch = useDispatch()
+  function HandleModals()
   {
-    if(showNewUploadModal === false){setShowNewUploadModal(true)}
-    else{setShowNewUploadModal(false)}
+    dispatch(openCloseNewUploadModal())    
+    dispatch(openCloseUploadProgressModal())  
   }
 
-  function UploadProgressModalHander()
-  {
-    if(showUploadProgressModal === false){setShowUploadProgressModal(true)}
-    else{setShowUploadProgressModal(false)}
-  }
+  const [selectedFiles, setSelectedFiles] = useState([]);
   return (
     <Container>
       <TitleContainer>
         <SummaryTitle>All Files</SummaryTitle>
-        <NewButtonContainer>
+        <NewButtonContainer onClick={HandleModals}>
           {
             showNewUploadModal ?<CloseIcon sx={iconStyle}/> : <NoteAddOutlinedIcon sx={iconStyle}/>
           }
-          <NewText onClick={NewUploadModalHander}>{showNewUploadModal ? "Close" : "New"}</NewText>
+          <NewText>{showNewUploadModal ? "Close" : "New"}</NewText>
         </NewButtonContainer>
       </TitleContainer>
-      <NewUploadModal showModal={showNewUploadModal} setShowModal={setShowNewUploadModal} setSelectedFiles = {setSelectedFiles}/>
-      <UploadProgressModal showModal={showUploadProgressModal} setShowModal={setShowUploadProgressModal} />
+      <NewUploadModal showModal={showNewUploadModal} setSelectedFiles = {setSelectedFiles}/>
+      <UploadProgressModal showModal={showUploadProgressModal}/>
+      {showNewUploadModal ? <WindowContainer onClick={HandleModals}/> : <div/>}
       <ListviewFolder/>
     </Container>
   )

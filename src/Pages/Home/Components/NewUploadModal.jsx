@@ -3,8 +3,8 @@ import styled from 'styled-components';
 import UploadFileOutlinedIcon from '@mui/icons-material/UploadFileOutlined';
 import DriveFolderUploadOutlinedIcon from '@mui/icons-material/DriveFolderUploadOutlined';
 import FolderIcon from '@mui/icons-material/Folder';
-import {one,two,three, HandleSelectedFiles} from '../../../Scripts/FileHandlingScripts';
-
+import { useSelector, useDispatch } from 'react-redux'
+import { selectChosenFiles,addFileToList} from '../../../Scripts/ReduxReducers';
 
 const ModalContainer = styled.div`
   width: 17%;
@@ -22,6 +22,7 @@ const ModalContainer = styled.div`
   opacity:0.98;
   justify-content: center;
   align-items: center;
+  "transition": "all 0.5s ease-in-out",
 `;
 
 const ContainerItem = styled.div`
@@ -73,10 +74,21 @@ const Divider = styled.div`
 
 
 
-const NewUploadModal = ({showModal, setShowModal}) => {
+const NewUploadModal = ({showModal}) => {
   const hiddenFileInput = useRef(null);
+  const selectedFiles = useSelector(selectChosenFiles);
+  const dispatch = useDispatch()
+
   const handleClick = event => {
     hiddenFileInput.current.click();
+  };
+
+  const HandleSelectedFiles = event => {
+    const uploadedFiles = event.target.files;
+    for(var file of uploadedFiles)
+    {
+      dispatch(addFileToList(file.name)) 
+    }
   };
   
   
@@ -89,6 +101,7 @@ const NewUploadModal = ({showModal, setShowModal}) => {
               <item.icon sx={iconStyle}/>
               <ItemTitle>{item.title}</ItemTitle>
               <input
+                multiple
                 type="file"
                 aria-label='Add'
                 ref={hiddenFileInput}
@@ -99,7 +112,7 @@ const NewUploadModal = ({showModal, setShowModal}) => {
         <Divider/>
         <SectionTitle>Create Empty</SectionTitle>
         {EmptyModalData && EmptyModalData.map((item, index) =>(
-            <ContainerItem key={item.title}  onClick={item.onClick}>  
+            <ContainerItem key={item.title} >  
               <item.icon sx={iconStyle}/>
               <ItemTitle>{item.title}</ItemTitle>
             </ContainerItem>
@@ -115,12 +128,10 @@ const UploadModalData =
   {
     title: 'File Upload',
     icon: UploadFileOutlinedIcon,
-    onClick: one
   },
   {
     title: 'Folder Upload',
     icon: DriveFolderUploadOutlinedIcon,
-    onClick: two
   },
 
 ];
@@ -130,7 +141,6 @@ const EmptyModalData =
   {
     title: 'Create Empty Folder',
     icon: FolderIcon,
-    onClick: three
   }
 
 ];
