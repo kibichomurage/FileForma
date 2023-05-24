@@ -1,9 +1,12 @@
-import {React,useState} from 'react';
+import {React,useState,useEffect} from 'react';
+import { useSelector, useDispatch } from 'react-redux'
 import styled from 'styled-components';
 import UnfoldMoreOutlinedIcon from '@mui/icons-material/UnfoldMoreOutlined';
 import UnfoldLessOutlinedIcon from '@mui/icons-material/UnfoldLessOutlined';
 import DeleteForeverOutlinedIcon from '@mui/icons-material/DeleteForeverOutlined';
 import InsertDriveFileOutlinedIcon from '@mui/icons-material/InsertDriveFileOutlined';
+import { selectChosenFiles,addFileToList, removeFileFromList} from '../../../Scripts/ReduxReducers';
+
 const ModalContainer = styled.div`
   width: 60%;
   height: ${props => props.bottomNavToggle ? "40%" : "50px"};
@@ -48,11 +51,19 @@ background-color: white;
 overflow: auto;
 `;
 const BottomContainerItem = styled.div`
-//background-color: white;
 width: 100%;
 height: 40px;
 border-bottom: solid 0.5px black;
 position: relative;
+
+`;
+
+const BottomContainerText = styled.h1`
+font-size:20px;
+font-weight:500;
+position:absolute;
+left:40px;
+top:10px;
 `;
 
 const iconStyle =
@@ -63,7 +74,7 @@ const iconStyle =
     "transition": "all 0.5s ease-in-out",
     "position":"absolute",
     "right":"10px",
-    "top":"10px",
+    "top":"6px",
     "transform":"rotate(45deg)"
   
 }
@@ -96,13 +107,21 @@ const leftIconStyle =
 }
 
 
-const UploadProgressModal =  ({showModal, setShowModal})  => {
+const UploadProgressModal = ({showModal})  => {
     const [bottomNavToggle, setBottomNavToggle] = useState(false);
+    const selectedFiles = useSelector(selectChosenFiles);
+    const dispatch = useDispatch()
+
     function ToggleHandler()
     {
         if(bottomNavToggle === false){setBottomNavToggle(true)}
         else{setBottomNavToggle(false)}
     }
+
+    const DeleteCurrentFile = (event, item) => {
+      console.log('Item: ', item);
+      dispatch(removeFileFromList(item))
+    };
     return (
     showModal ? 
     <ModalContainer bottomNavToggle={bottomNavToggle}>
@@ -117,10 +136,12 @@ const UploadProgressModal =  ({showModal, setShowModal})  => {
             }
         </TopContainer>
         <BottomContainer bottomNavToggle={bottomNavToggle}>
-            {bottomNavToggle && UploadData && UploadData.map((item, index) =>(
+            {bottomNavToggle && selectedFiles && selectedFiles.map((item, index) =>(
                 <BottomContainerItem>
                     <InsertDriveFileOutlinedIcon sx={leftIconStyle}/>
-                    <DeleteForeverOutlinedIcon sx={trashStyle}/>
+                    <BottomContainerText>{item} </BottomContainerText>
+                    
+                    <DeleteForeverOutlinedIcon sx={trashStyle} onClick={e => DeleteCurrentFile(e,item)}/>
                 </BottomContainerItem>
             ))}
         </BottomContainer>
